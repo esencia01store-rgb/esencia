@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo Esencia - Perfumes Árabes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+              800: '#854d0e',
+              900: '#713f12',
+              gold: '#d4af37',
+              darkBg: '#0f0f12',
+              cardBg: '#18181c'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f0f12; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fef08a 0%, #d4af37 50%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-border-glow {
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-[#0f0f12] text-zinc-100 min-h-screen font-sans flex flex-col">
+
+  <!-- Header Section -->
+  <header class="sticky top-0 z-40 bg-[#0f0f12]/90 backdrop-blur-md border-b border-zinc-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 p-0.5 shadow-lg shadow-amber-500/20">
+          <div class="w-full h-full bg-[#0f0f12] rounded-[10px] flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight gold-gradient-text">ESENCIA</h1>
+          <p class="text-xs text-zinc-400 font-medium tracking-widest uppercase">Perfumes Árabes · Catálogo Digital</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="toggle-stats-btn" class="px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800/50 hover:bg-zinc-800 text-xs font-medium text-zinc-300 flex items-center gap-2 transition">
+          <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
+          <span class="hidden sm:inline">Estadísticas</span>
+        </button>
+        <button id="cart-toggle-btn" class="relative px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-zinc-950 font-semibold text-xs flex items-center gap-2 shadow-md transition">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <span>Pedido / Cotizador</span>
+          <span id="cart-badge" class="ml-1 bg-zinc-950 text-amber-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full flex flex-col gap-6">
+
+    <!-- KPI / Quick Stats Panel (Collapsible/Toggleable) -->
+    <div id="stats-panel" class="hidden grid-cols-2 sm:grid-cols-4 gap-3 bg-zinc-900/60 p-4 rounded-xl border border-zinc-800/80">
+      <div class="p-3 bg-zinc-800/40 rounded-lg border border-zinc-800">
+        <p class="text-xs text-zinc-400">Total Productos</p>
+        <p id="stat-total-count" class="text-lg font-bold text-amber-400">439</p>
+      </div>
+      <div class="p-3 bg-zinc-800/40 rounded-lg border border-zinc-800">
+        <p class="text-xs text-zinc-400">Precio Promedio</p>
+        <p id="stat-avg-price" class="text-lg font-bold text-amber-400">$0</p>
+      </div>
+      <div class="p-3 bg-zinc-800/40 rounded-lg border border-zinc-800">
+        <p class="text-xs text-zinc-400">Precio Más Bajo</p>
+        <p id="stat-min-price" class="text-lg font-bold text-emerald-400">$0</p>
+      </div>
+      <div class="p-3 bg-zinc-800/40 rounded-lg border border-zinc-800">
+        <p class="text-xs text-zinc-400">Marca Más Presente</p>
+        <p id="stat-top-brand" class="text-lg font-bold text-amber-400">Lattafa</p>
+      </div>
+    </div>
+
+    <!-- Controls & Search Bar -->
+    <div class="bg-zinc-900/80 p-4 rounded-2xl border border-zinc-800/80 shadow-xl space-y-4">
+      <!-- Search Input & Sorting Row -->
+      <div class="flex flex-col md:flex-row gap-3">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400"></i>
+          <input type="text" id="search-input" placeholder="Buscar por perfume, nota, ml (ej. Yara, Club de Nuit, Asad, 100ml)..." 
+                 class="w-full pl-10 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-sm focus:outline-none focus:border-amber-500/80 text-zinc-200 placeholder-zinc-500 transition" />
+          <button id="clear-search-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div class="flex gap-2">
+          <!-- Gender / Category Filter -->
+          <select id="category-filter" class="px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-200 focus:outline-none focus:border-amber-500">
+            <option value="all">Todas las Categorías</option>
+            <option value="masculino">Masculinos</option>
+            <option value="femenino">Femeninos</option>
+            <option value="unisex">Unisex</option>
+            <option value="kit">Kits & Sets</option>
+          </select>
+
+          <!-- Sorting Filter -->
+          <select id="sort-select" class="px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs sm:text-sm text-zinc-200 focus:outline-none focus:border-amber-500">
+            <option value="default">Orden Por Defecto</option>
+            <option value="price-asc">Precio: Menor a Mayor</option>
+            <option value="price-desc">Precio: Mayor a Menor</option>
+            <option value="name-asc">Nombre: A - Z</option>
+            <option value="name-desc">Nombre: Z - A</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- House / Brand Filter Pills -->
+      <div class="space-y-1.5">
+        <label class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">Filtrar por Casa de Perfumes:</label>
+        <div id="brand-pills-container" class="flex flex-wrap gap-1.5 overflow-x-auto pb-1">
+          <!-- Dynamic Pills Insertion -->
+        </div>
+      </div>
+
+      <!-- Price Slider Filter -->
+      <div class="pt-2 border-t border-zinc-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-zinc-400">
+        <div class="flex items-center gap-3 flex-1">
+          <span class="whitespace-nowrap">Rango de Precio:</span>
+          <input type="range" id="price-range" min="30000" max="250000" step="5000" value="250000" class="w-full accent-amber-500 cursor-pointer">
+        </div>
+        <div class="flex items-center justify-between sm:justify-end gap-2 text-zinc-300 font-mono">
+          <span>Máx: <strong id="price-range-val" class="text-amber-400">$250.000</strong></span>
+          <button id="reset-filters-btn" class="ml-2 text-xs text-amber-500/80 hover:text-amber-400 underline font-sans">
+            Limpiar Filtros
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filter Summary Bar -->
+    <div class="flex items-center justify-between text-xs text-zinc-400 px-1">
+      <p>Mostrando <span id="results-count" class="font-bold text-amber-400">0</span> fragancias de <span class="font-bold text-zinc-200">439</span></p>
+      <p id="active-brand-label" class="font-medium text-zinc-400">Casa: <span class="text-zinc-200">Todas</span></p>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Dynamic Products Inserted Here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center text-zinc-500">
+      <div class="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center mb-4 text-zinc-600">
+        <i data-lucide="search-x" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-base font-semibold text-zinc-300">No se encontraron fragancias</h3>
+      <p class="text-xs text-zinc-500 mt-1 max-w-xs">Intenta modificar los términos de búsqueda o restablecer los filtros de precio o marca.</p>
+      <button id="empty-reset-btn" class="mt-4 px-4 py-2 bg-amber-500 text-zinc-950 text-xs font-semibold rounded-lg hover:bg-amber-400 transition">
+        Restablecer Filtros
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Cart / Resale Quote Drawer Sidebar -->
+  <div id="cart-drawer-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300"></div>
+  
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-zinc-900 border-l border-zinc-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950">
+      <div class="flex items-center gap-2">
+        <i data-lucide="calculator" class="w-5 h-5 text-amber-400"></i>
+        <h2 class="font-bold text-sm text-zinc-100">Cotizador y Pedido</h2>
+      </div>
+      <button id="close-cart-btn" class="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Markup / Margin Calculator Control -->
+    <div class="p-3.5 bg-zinc-950/60 border-b border-zinc-800 space-y-2">
+      <div class="flex items-center justify-between text-xs">
+        <label for="margin-input" class="text-zinc-300 font-medium flex items-center gap-1">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-400"></i>
+          Margen de Ganancia Reventa:
+        </label>
+        <span id="margin-val-display" class="font-bold text-amber-400">+30%</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <input type="range" id="margin-input" min="0" max="100" step="5" value="30" class="w-full accent-amber-500 cursor-pointer">
+      </div>
+      <div class="flex justify-between text-[10px] text-zinc-500">
+        <span>0% (Costo)</span>
+        <span>+30% (Sugerido)</span>
+        <span>+50%</span>
+        <span>+100%</span>
+      </div>
+    </div>
+
+    <!-- Items List Container -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 divide-y divide-zinc-800/60">
+      <!-- Dynamic cart items -->
+    </div>
+
+    <!-- Drawer Footer / Summary -->
+    <div class="p-4 bg-zinc-950 border-t border-zinc-800 space-y-3">
+      <div class="space-y-1.5 text-xs">
+        <div class="flex justify-between text-zinc-400">
+          <span>Subtotal Costo Mayorista:</span>
+          <span id="cart-cost-total" class="font-mono text-zinc-200">$0</span>
+        </div>
+        <div class="flex justify-between text-emerald-400">
+          <span>Ganancia estimada:</span>
+          <span id="cart-profit-total" class="font-mono">$0</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-amber-400 pt-1 border-t border-zinc-800">
+          <span>Total Venta Final:</span>
+          <span id="cart-sale-total" class="font-mono text-base">$0</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button id="clear-cart-btn" class="py-2 px-3 border border-zinc-700 hover:bg-zinc-800 text-zinc-300 font-medium text-xs rounded-xl flex items-center justify-center gap-1.5">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          Vaciar
+        </button>
+        <button id="export-whatsapp-btn" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          Enviar Pedido
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-zinc-800/80 bg-zinc-950 py-6 text-center text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p>Catálogo Esencia · Perfumes Árabes Importados · Precios finales en ARS</p>
+      <p class="text-zinc-600">Herramienta de Búsqueda y Cotización para Revendedores</p>
+    </div>
+  </footer>
+
+  <!-- Catalog Data & Application Logic -->
+  <script>
+    // COMPLETE CATALOG DATA EXTRACTION FROM PDF
+    const catalogData = [
+      // --- LATTAFA ---
+      { brand: "Lattafa", name: "LATTAFA AFEEF 100ML", price: 124800, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA ASAD MEN 100ML", price: 60450, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA AJWAA PRIDE 90ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA ASAD ZANZIBAR 100ML *BLUE*", price: 50700, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA AJWAD PINK TO PINK 60ML", price: 54600, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ASAD BOURBON 100ML", price: 81900, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA AL NOBLE AMEER EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA BADEE AL OUD AMETHYST EDP 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA AL NOBLE WAZEER EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA BADEE AL OUD GLORY BLACK 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA AL NOBLE SAFEER EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA BADEE AL OUD NOBLE BLUSH 100ML", price: 52650, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA AMEERAT AL ARAB PRIVE ROSE 100ML", price: 50700, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA BADEE AL OUD SUBLIME 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA ANSAAM GOLD 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA BADEE HONOR GLORY WHITE EDP 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA YARA ELIXIR 100ML", price: 68250, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ASAD ELIXIR 100ML", price: 68250, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA AMEER AL OUD INTENSE", price: 46800, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA BAYAAN EDP 100ML", price: 52650, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ECLAIRE EDP 100ML", price: 78000, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ETERNAL OUD EAU DE PARFUM 100ML", price: 76050, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA EJAAZI EDP 100ML", price: 42900, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA AL NASHAMA CAPRICE EDP UNISSEX 100ML", price: 58500, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA PRIDE BLUE SAPPHIRE EDP UNISSEX 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA SHEIKH AL SHUYUK SUPREME EDP UNISSEX 100ML", price: 46800, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA RAVE PURE DESIRE GOLD EDP FEM 100ML", price: 48750, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA AJAYEB DUBAI EDP UNISSEX 100ML", price: 42900, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA EMAAN EDP 100ML", price: 50700, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA FAKHAR EXTRAIT 100ML *GOLD*", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA HAYA EDP 100ML", price: 64350, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA FAKHAR MAN SILVER EDP 100ML", price: 58500, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA ANGHAM 100ML", price: 60450, category: "femenino" },
+      { brand: "Lattafa", name: "FAKHAR PLATIN 100ML", price: 50700, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA ANGHAM SECOND SONG 100ML", price: 60450, category: "femenino" },
+      { brand: "Lattafa", name: "LATTFA NEBRAS ELIXIR EDP 100ML", price: 85800, category: "femenino" },
+      { brand: "Lattafa", name: "AJWAD EDP 60ML", price: 44850, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA FAKHAR ROSE GOLD EDP 100ML", price: 66300, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA KHAMRAH WAHA 100ML", price: 115050, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA HAYAATI 100ML", price: 42900, category: "masculino" },
+      { brand: "Lattafa", name: "KHAMRAH DUKHAN 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA HAYAATI AL MALEKY EDP 100ML", price: 44850, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA KHAMRAH 100ML", price: 56550, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA HAYAATI FLORENCE 100ML", price: 42900, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA KHAMRAH QAHWA 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA HAYAATI GOLD ELIXIR 100ML", price: 42900, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA KHALID EDP 80ML", price: 72150, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA LIAM BLUE SHINE EDP MASCULINO 100ML", price: 72150, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA MOHRA SILKY ROSE 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA MAAHIR BLACK EDP 100ML", price: 54600, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA MUSAMAM EDP 100ML", price: 101400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA MAAHIR LEGACY SILVER 100ML", price: 58500, category: "masculino" },
+      { brand: "Lattafa", name: "OPULENT OUD EDP 100ML", price: 58500, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA MAAHIR GOLD EDP 100ML", price: 54600, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA OUD LAIL MALEKI 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA MAYAR NATURAL INTENSE EDP 100ML", price: 48750, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA P. NEBRAS EDP 100ML", price: 68250, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA KIDS PLAY 75ML", price: 33150, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA KIDS HAPPY BRUSH 75ML", price: 33150, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA KIDS SING 75ML", price: 33150, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA VICTORIA EDP", price: 60450, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA MAYAR CHERRY INTENSE EDP UNISSEX 100ML", price: 50700, category: "unisex" },
+      { brand: "Lattafa", name: "ASAD ZANZIBAR EDIT. LIMITED 100ML", price: 54600, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA QAED AL FURSAN EDP 90ML", price: 42900, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA RAED LUXE SILVER 100ML", price: 52650, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA QAED AL FURSAN UNLIMITED EDP 90ML", price: 42900, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA RAED OUD EDP H V 100ML", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA QAED AL FURSAN UNTAMED 90ML", price: 39000, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA VELVET OUD", price: 52650, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA ZIKRA EDP 100ML", price: 85800, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA SAKEENA EDP 100ML", price: 52650, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA THAMEEN MUSK SO POUDRE EDP 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA SEHR EDP 100ML", price: 76050, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA THAMEEN MUSK SUGAR PLUM EDP 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA SHAHEEN SILVER 100ML", price: 66300, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA THAMEER MUSK CANDY ROSE EDP 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA EMEER EDP 100ML", price: 78000, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA THAMEEN MUSK WILD VANILLA EDP 100ML", price: 58500, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA YARA CANDY 100ML", price: 56550, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA THARWAH SILVER EDP 100ML", price: 66300, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA YARA MOI BRANCO 100ML", price: 52650, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA THOUQ 80ML", price: 66300, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA YARA ROSA 100ML", price: 60450, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA TOLEEN EDP 80ML", price: 81900, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA YARA TOUS LARANJA 100ML", price: 50700, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA THE KINGDOM WOMEN 100ML", price: 56550, category: "femenino" },
+      { brand: "Lattafa", name: "MUSAMAM WHITE INTENSE", price: 89700, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA THE KINGDOM EDP MEN 100ML", price: 60450, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA HIS CONFESSION EDP 100ML", price: 72150, category: "masculino" },
+      { brand: "Lattafa", name: "JASOOR EDP 100ML", price: 70200, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA HER CONFESSION EDP 100ML", price: 68250, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA MAYAR ROSA 100ML", price: 50700, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA PISA EDP 100ML", price: 87750, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA PRIDE THARWAH GOLD EDP UNISSEX 100ML", price: 111150, category: "unisex" },
+      { brand: "Lattafa", name: "RAMAAD AL OUD EDP 100ML", price: 68250, category: "unisex" },
+      { brand: "Lattafa", name: "KHANJAR EDP 85ML", price: 97500, category: "unisex" },
+      { brand: "Lattafa", name: "QIMMAH FOR WOMEN EDP 100ML", price: 48750, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ATLAS 55ML", price: 64350, category: "masculino" },
+      { brand: "Lattafa", name: "LATTAFA CONFIDENTAL PRIVATE GOLD", price: 50700, category: "unisex" },
+      { brand: "Lattafa", name: "ISHQ AL SHUYUKH SILVER EDP 100ML", price: 58500, category: "masculino" },
+      { brand: "Lattafa", name: "ISHQ AL SHUYUKH GOLD EDP 100ML", price: 58500, category: "unisex" },
+      { brand: "Lattafa", name: "VINTAGE RADIO PRIDE COLLECTION EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "QIMMAH FOR MEN EDP 100ML", price: 50700, category: "masculino" },
+      { brand: "Lattafa", name: "EKHTIARI EDP 100ML", price: 54600, category: "unisex" },
+      { brand: "Lattafa", name: "SONDOS EDP 100ML", price: 74100, category: "unisex" },
+      { brand: "Lattafa", name: "AL JAWHARA NICHE EMARATI COLLECTION EDP 80ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "ANTIQUE NICHE EMARATI COLLECTION EDP 80ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "GHINWA NICHE EMARATI COLLECTION EDP 80ML", price: 111150, category: "unisex" },
+      { brand: "Lattafa", name: "HAYAAM NICHE EMARATI COLLECTION EDP 80ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "LUJAIN NICHE EMARATI COLLECTION EDP 80ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "MUGHAL FORT NICHE EMARATI COLLECTION EDP 80ML", price: 111150, category: "unisex" },
+      { brand: "Lattafa", name: "REMAS NICHE EMARATI COLLECTION EDP 80ML", price: 91650, category: "femenino" },
+      { brand: "Lattafa", name: "QAA'ED INTENSE EDP 100ML", price: 79950, category: "masculino" },
+      { brand: "Lattafa", name: "VINTAGE CASTLE NICHE EMARATI COLLECTION EDP 80ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "QAA'ED EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "MUSK MOOD EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "MUSK SALAMA EDP 100ML", price: 60450, category: "unisex" },
+      { brand: "Lattafa", name: "OPULENT MUSK EDP 100ML", price: 56550, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA MAHARJAN SILVER 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "OUD MOOD EDP 100ML", price: 62400, category: "unisex" },
+      { brand: "Lattafa", name: "OUD MOOD ELIXIR EDP 100ML", price: 66300, category: "unisex" },
+      { brand: "Lattafa", name: "RAMZ BROWN EDP 100ML", price: 66300, category: "masculino" },
+      { brand: "Lattafa", name: "RAMZ SILVER EDP 100ML", price: 64350, category: "masculino" },
+      { brand: "Lattafa", name: "ART OF ARABIA I PRIDE COLLECTION EDP 100ML", price: 93600, category: "unisex" },
+      { brand: "Lattafa", name: "ART OF ARABIA III PRIDE COLLECTION EDP 100ML", price: 79950, category: "unisex" },
+      { brand: "Lattafa", name: "TERIAQ EDP UNISSEX 100ML", price: 85800, category: "unisex" },
+      { brand: "Lattafa", name: "ANA ABIYEDH POUDRÉE EDP FEMENINO 60ML", price: 54600, category: "femenino" },
+      { brand: "Lattafa", name: "LATTAFA ART OF UNIVERSE 100ML", price: 78000, category: "unisex" },
+      { brand: "Lattafa", name: "EJAAZI INTENSE SILVER EDP UNISSEX 100ML", price: 54600, category: "unisex" },
+      { brand: "Lattafa", name: "AWRAQ AL OUD EDP UNISSEX 100ML", price: 64350, category: "unisex" },
+      { brand: "Lattafa", name: "PRIDE AFFECTION EDP FEMENINO 100ML", price: 68250, category: "femenino" },
+      { brand: "Lattafa", name: "GUINEA EDP FEMENINO 100ML", price: 58500, category: "femenino" },
+      { brand: "Lattafa", name: "SAFWAAN L´AUTRE MUSK EDP UNISSEX 100ML", price: 76050, category: "unisex" },
+      { brand: "Lattafa", name: "AL WASAM WAJD EDP UNISSEX 100ML", price: 79950, category: "unisex" },
+      { brand: "Lattafa", name: "PRIDE RAW HUMAN EDP UNISSEX 100ML", price: 74100, category: "unisex" },
+      { brand: "Lattafa", name: "PRIDE EMBRACE EDP UNISSEX 100ML", price: 70200, category: "unisex" },
+      { brand: "Lattafa", name: "TAMINA EDP UNISSEX 100ML", price: 54600, category: "femenino" },
+      { brand: "Lattafa", name: "TERIAQ INTENSE EDP UNISSEX 100ML", price: 74100, category: "unisex" },
+      { brand: "Lattafa", name: "ART OF NATURE II EDP UNISSEX 100ML", price: 83850, category: "unisex" },
+      { brand: "Lattafa", name: "PRIDE BREEZE EDP FEMENINO 100ML", price: 89700, category: "femenino" },
+      { brand: "Lattafa", name: "PRIDE ARTISAN ETHNIQUE EDP UNISSEX 100ML", price: 72150, category: "unisex" },
+      { brand: "Lattafa", name: "LATTAFA ASAD MEN 100ML + ASAD ZANZIBAR 100ML", price: 97500, category: "kit" },
+      { brand: "Lattafa", name: "LATTAFA YARA ROSA 100ML + YARA CANDY 100ML", price: 97500, category: "kit" },
+
+      // --- AFNAN ---
+      { brand: "Afnan", name: "AFNAN 9PM BLACK MEN EDP 100ML", price: 60450, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN SUPREMACY COLLECTORS EDITION EDP 100ML", price: 122850, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN 9AM DIVE 100ML", price: 68250, category: "unisex" },
+      { brand: "Afnan", name: "AFNAN HISTORIC OLMEDA EDP 100ML", price: 74100, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN 9PM REBEL EDP 100ML", price: 85800, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN 9PM NIGHT OUT 100ML", price: 107250, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN 9AM CORAL POUR FEMME", price: 70200, category: "femenino" },
+      { brand: "Afnan", name: "AFNAN 9PM PURPLE POUR FEMME", price: 68250, category: "femenino" },
+      { brand: "Afnan", name: "RARE TIFFANY EDP 100ML", price: 79950, category: "femenino" },
+      { brand: "Afnan", name: "AFNAN 9PM ELIXIR 100ML", price: 81900, category: "masculino" },
+      { brand: "Afnan", name: "MIRSAAL WITH LOVE EDP FEM 90ML", price: 81900, category: "femenino" },
+      { brand: "Afnan", name: "AFNAN HISTORIC SAHARA EXTRAIT DE PARFUM UNISSEX 100ML", price: 93600, category: "unisex" },
+      { brand: "Afnan", name: "SUPREMACY IN OUD EDP 100ML", price: 70200, category: "unisex" },
+      { brand: "Afnan", name: "SUPREMACY NOIR EDP 100ML", price: 72150, category: "masculino" },
+      { brand: "Afnan", name: "SUPREMACY SILVER EDP MASC 100ML", price: 87750, category: "masculino" },
+      { brand: "Afnan", name: "SUPREMACY TAPIS ROUGE EDP FEM 90ML", price: 78000, category: "femenino" },
+      { brand: "Afnan", name: "SUPREMACY PINK POUR FEMME EDP 100ML", price: 70200, category: "femenino" },
+      { brand: "Afnan", name: "SUPREMACY GOLD EDP 100ML", price: 66300, category: "unisex" },
+      { brand: "Afnan", name: "SUPREMACY IN HEAVEN INCENSE EDP 100ML", price: 87750, category: "masculino" },
+      { brand: "Afnan", name: "SUPREMACY IN HEAVEN CLASSIC EDP 100ML", price: 78000, category: "masculino" },
+      { brand: "Afnan", name: "THURATI MARRON EDP 100ML", price: 68250, category: "masculino" },
+      { brand: "Afnan", name: "THURATI ROJO EDP 100ML", price: 68250, category: "femenino" },
+      { brand: "Afnan", name: "THURATI LILA EDP 100ML", price: 70200, category: "femenino" },
+      { brand: "Afnan", name: "EDICT AMBERYTHME EDP 80ML", price: 95550, category: "unisex" },
+      { brand: "Afnan", name: "EDICT MUSCTIQUE EDP 80ML", price: 95550, category: "unisex" },
+      { brand: "Afnan", name: "EDICT OUDDICTION EDP 80ML", price: 95550, category: "unisex" },
+      { brand: "Afnan", name: "SOUVENIR BLOOMING BLISS EDP 100ML (ROJO)", price: 95550, category: "femenino" },
+      { brand: "Afnan", name: "SOUVENIR NEGRO EDP 100ML", price: 70200, category: "masculino" },
+      { brand: "Afnan", name: "AFNAN TURATHI ELECTRIC EDP UNISSEX 90ML", price: 78000, category: "unisex" },
+      { brand: "Afnan", name: "AFNAN TURATHI BLUE MAN EDP 90ML", price: 93600, category: "masculino" },
+      { brand: "Afnan", name: "KIAANA ANGEL EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Afnan", name: "KIAANA CRUSH EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Afnan", name: "KIT AFNAN 9AM DIVE 100ML + GEL 150ML + DESODORANTE 150ML", price: 97500, category: "kit" },
+      { brand: "Afnan", name: "KIT AFNAN SUPREMACY NOT ONLY INTENSE EDP 100ML + GEL + DESO", price: 126750, category: "kit" },
+      { brand: "Afnan", name: "KIT AFNAN SUPREMACY SILVER EDP 100ML + AFTER SHAVE + GEL", price: 97500, category: "kit" },
+      { brand: "Afnan", name: "KIT AFNAN SUPREMACY PURPLE EDP 100ML + GEL + LOTION", price: 97500, category: "kit" },
+      { brand: "Afnan", name: "KIT AFNAN THURATI AZUL EDP 100ML + GEL + AFTER SHAVE", price: 117000, category: "kit" },
+
+      // --- ARMAF ---
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT INTENSE EDT 105ML", price: 68250, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT UNTOLD EDP 105ML", price: 78000, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT MILESTONE 105ML", price: 68250, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT URBAN EDP 105ML", price: 66300, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT OUD PARFUM 105ML", price: 105300, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT URBAN ELIXIR 105ML", price: 78000, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT HUNTER FOR MEN 100ML", price: 87750, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT WOMAN EDP 100ML", price: 66300, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT HUNTER KILLER RED EDP 100ML", price: 87750, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT ICONIC BLUE EDP 105ML", price: 76050, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT MALEKA EDP 100ML", price: 74100, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT INTENSE IMPERIALE 105ML", price: 78000, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT LIONHEART MAN 100ML", price: 74100, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT SILLEGA EDP 105ML UNISSEX", price: 68250, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ETER DESERT BREEZE EDP UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ETER DESERT STAR EDP UNISSEX 100ML", price: 79950, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ETER MAGICAL OUD EDP UNISSEX 100ML", price: 79950, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ETER OASIS EDP FEMENINO 100ML", price: 79950, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF CLUB DE NUIT PRECIEUX EDP 55ML", price: 103350, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY ARTISTO 100ML", price: 81900, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY CANDEE EDP FEMENINO 100ML", price: 52650, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY HOMME WHITE EDITION EDP MASCULINO 100ML", price: 62400, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY LIMONI 100ML", price: 52650, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY MANDARIN EDP 100ML", price: 64350, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY SPECTRA 100ML", price: 52650, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY TYRANT EDP 100ML", price: 52650, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY AOUD EDP 100ML", price: 52650, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY HOMME EDP MASCULINO 100ML", price: 56550, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY DUBAI CHOCOLATE 100ML", price: 52650, category: "unisex" },
+      { brand: "Armaf", name: "ODYSSEY WILD ONE EDP 100ML", price: 50700, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY BLACK FOREST 100ML", price: 54600, category: "masculino" },
+      { brand: "Armaf", name: "ODYSSEY MANDARIN SKY ELIXIR 100ML", price: 81900, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY AQUA EDP 100ML", price: 64350, category: "masculino" },
+      { brand: "Armaf", name: "ODYSSEY MEGA 100ML", price: 52650, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY GO MANGO EDP 100ML", price: 58500, category: "unisex" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY EAU DE MONTAGNE EDP 100ML", price: 68250, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY MARSHMALLOW EDP 100ML", price: 54600, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF ODYSSEY REVOLUTION ULTRA EDITION EDP 100ML", price: 56550, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CHECK MATE KING EDP MASCULINO 100ML", price: 109200, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF CHECK MATE QUEEN EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF THE LIONS CLUB FEROCE EDP MASC 100ML", price: 85800, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF THE LIONS CLUB RUGIR EDP MASCULINO 100ML", price: 81900, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF UNIQ EFFECTS OF UNIC EDP FEM 100ML", price: 70200, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF CONNOISSEUR EDP MASC 100ML", price: 85800, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF EL CIELO EDP MASC 100ML", price: 58500, category: "masculino" },
+      { brand: "Armaf", name: "ARMAF UNIQ OUD FOREVER EDP FEM 100ML", price: 70200, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF DELIGHTS ISLAND BLISS EDP FEM 100ML", price: 89700, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF RED SKY EPD FEM 105ML", price: 70200, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF YUM YUM 100ML", price: 76050, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF TRES JOUR EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Armaf", name: "THE PRIDE OF ARMAF ADMIRAL EDP 100ML", price: 83850, category: "masculino" },
+      { brand: "Armaf", name: "THE PRIDE OF ARMAF ROSE OUD EDP 100ML", price: 83850, category: "unisex" },
+      { brand: "Armaf", name: "THE PRIDE OF ARMAF ROUGE EDP 100ML", price: 79950, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF MAGNIFIQ EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF CATWALK EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF VOCEVIVA EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF MYSTIQUE EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF GRANDEUR EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF ATTITUDE EDP FEMENINO 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF DAZZLING EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "MISS ARMAF CHIC EDP 100ML", price: 81900, category: "femenino" },
+      { brand: "Armaf", name: "ARMAF TRES NUIT LYRIC EDP MASC 100ML", price: 58500, category: "masculino" },
+      { brand: "Armaf", name: "TAG HIM UOMO ROSSO EDP 100ML", price: 99450, category: "masculino" },
+      { brand: "Armaf", name: "TAG HER DONNA COLORATA EDP 100ML", price: 99450, category: "femenino" },
+      { brand: "Armaf", name: "TAG HIM UOMO NERO EDP 100ML", price: 99450, category: "masculino" },
+      { brand: "Armaf", name: "EGO EXOTIC EDP 100ML", price: 99450, category: "unisex" },
+      { brand: "Armaf", name: "EGO TIGRE EDP 100ML", price: 99450, category: "masculino" },
+      { brand: "Armaf", name: "LE PARFAIT POUR HOMME EDP 100ML", price: 89700, category: "masculino" },
+      { brand: "Armaf", name: "LE PARFAIT POUR FEMME EDP 100ML", price: 89700, category: "femenino" },
+      { brand: "Armaf", name: "CRAZE MEN EDP 100ML", price: 79950, category: "masculino" },
+      { brand: "Armaf", name: "KIT ARMAF MINIATURA WOMEN (3 X 30ML)", price: 165750, category: "kit" },
+      { brand: "Armaf", name: "KIT ARMAF MINIATURA MEN (3 X 30ML)", price: 165750, category: "kit" },
+      { brand: "Armaf", name: "KIT ARMAF CDN WOMEN EDP 105ML + SET", price: 152100, category: "kit" },
+      { brand: "Armaf", name: "KIT ARMAF CDN MILESTONE EDP 105ML + SET", price: 156000, category: "kit" },
+      { brand: "Armaf", name: "KIT ARMAF CDN INTENSE MAN EDT 105ML + SPRAY", price: 136500, category: "kit" },
+
+      // --- AL HARAMAIN ---
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EDITION 120ML", price: 103350, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EDITION 60ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD AQUA DUBAI 100ML", price: 103350, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EDITION 75ML", price: 107250, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD EXCLUSIF EMERALD UNISSEX 60ML", price: 120900, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EDITION 200ML", price: 156000, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD WHITE EDITION 100ML", price: 115050, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD DUBAI NIGHT 100ML", price: 103350, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD WHITE EDITION 200ML", price: 130650, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD CARBON EDITION 100ML", price: 124800, category: "masculino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD WHITE EDITION 60ML", price: 107250, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD CARBON EDITION 60ML", price: 117000, category: "masculino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD BLEU 100ML", price: 120900, category: "masculino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD RUBY EDITION 100ML", price: 117000, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EXTREME EXTRAIT 100ML", price: 117000, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD 999 DUBAI EXTRAIT 100ML", price: 111150, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN GREEN DUBAI EXTRAIT DE PARFUM UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN DAS ZIEL SCHWARZ EXTRAIT UNISSEX 100ML", price: 99450, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AZLAN OUD BLEU EXTRAIT UNISSEX 100ML", price: 118950, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AZLAN OUD SAFFRON EXTRAIT UNISSEX 100ML", price: 118950, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN PALM DUBAI EXTRAIT DE PARFUM 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN HARAMAIN ROUGE EDP UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN LE REVE D EVE RED JASPER EXTRAIT FEM 100ML", price: 93600, category: "femenino" },
+      { brand: "Al Haramain", name: "HARAMAIN STORY MY LIFE EDP FEM 75ML", price: 64350, category: "femenino" },
+      { brand: "Al Haramain", name: "HARAMAIN BELLE ROUGE EDP FEM 75ML", price: 52650, category: "femenino" },
+      { brand: "Al Haramain", name: "HARAMAIN BELLE EDP FEM 75ML", price: 52650, category: "femenino" },
+      { brand: "Al Haramain", name: "BON CHERIE EXTRAIT DE PARFUM UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "BON CHERIE VIOLETTE EXTRAIT DE PARFUM UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AZLAN OUD AMBER EXTRAIT UNISSEX 100ML", price: 130650, category: "unisex" },
+      { brand: "Al Haramain", name: "DAS ZIEL GLANZ EXTRAIT DE PARFUM UNISSEX 100ML", price: 91650, category: "unisex" },
+      { brand: "Al Haramain", name: "ZAHARA SAGUE DUBAI EXTRAIT DE PARFUM FEM 100ML", price: 81900, category: "femenino" },
+      { brand: "Al Haramain", name: "OL,AF EDP UNISSEX 100ML", price: 78000, category: "unisex" },
+      { brand: "Al Haramain", name: "LEIF EDP MASC 100ML", price: 78000, category: "masculino" },
+      { brand: "Al Haramain", name: "FREYA EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER ROYAL MUSK EDP 100ML", price: 85800, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD ULTRA VIOLET 120ML", price: 142350, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN OUD MUSK EDP 100ML", price: 85800, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD PRIVATE EDITION 100ML", price: 126750, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN MUSK COLLECTION 100ML", price: 85800, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD GOLD EXTREME EXTRAIT 200ML", price: 175500, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER MUSK 100ML", price: 85800, category: "unisex" },
+      { brand: "Al Haramain", name: "AL HARAMAIN MUSK MALIKI 100ML", price: 85800, category: "unisex" },
+      { brand: "Al Haramain", name: "L AVENTURE FEMME EDP 100ML", price: 78000, category: "femenino" },
+      { brand: "Al Haramain", name: "AL HARAMAIN AMBER OUD ROUGE 120ML", price: 154050, category: "unisex" },
+      { brand: "Al Haramain", name: "L AVENTURE BLANCHE EDP 100ML", price: 78000, category: "femenino" },
+      { brand: "Al Haramain", name: "L AVENTURE GOLD EDP 100ML", price: 66300, category: "femenino" },
+      { brand: "Al Haramain", name: "L AVENTURE ROSE EDP 100ML", price: 78000, category: "femenino" },
+      { brand: "Al Haramain", name: "L AVENTURE KNIGHT EDP 100ML", price: 78000, category: "masculino" },
+      { brand: "Al Haramain", name: "L AVENTURE GRAPEFRUIT EDP 100ML", price: 78000, category: "unisex" },
+      { brand: "Al Haramain", name: "L AVENTURE CIEL EDP 100ML", price: 78000, category: "masculino" },
+      { brand: "Al Haramain", name: "L AVENTURE IRIS EDP 100ML", price: 66300, category: "femenino" },
+      { brand: "Al Haramain", name: "KIT EXPLORE HARAMAIN SPECIAL COLLECTION (8 X 10ML)", price: 117000, category: "kit" },
+
+      // --- BHARARA ---
+      { brand: "Bharara", name: "BHARARA KING EDP 100ML", price: 115050, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA KING EDP 200ML", price: 156000, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ROME LUCKY 100ML", price: 109200, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ROME FANTASMAGORY 100ML", price: 103350, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA ROME EXTRADOSE MASCULINO 100ML", price: 103350, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ROME POUR HOMME 100ML", price: 95550, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ROME LA BOMBA FEM 100ML", price: 105300, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA ROME PARADOX FEM 100ML", price: 103350, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA ROME INTENSE MASCULINO 100ML", price: 105300, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ROME EXTRADOSE FEM 100ML", price: 99450, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA ROME MELANCHOLIA 100ML", price: 109200, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA ROME YUM YUM EDP FEM 100ML", price: 78000, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA NICHE FEMME 100ML", price: 97500, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA ROME IVORY MASCULINO 100ML", price: 105300, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA VIKING CAIRO 100ML", price: 144300, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA KING PARFUM 100ML", price: 130650, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA VIKING RIO 100ML", price: 140400, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA VIKING KASHMIR 100ML", price: 148200, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA TEQUILA BLEU POUR HOMME 100ML", price: 79950, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA VIKING DUBAI 100ML", price: 148200, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA KING VIKING BEIRUT 100ML", price: 140400, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA ONYX EDP 100ML", price: 118950, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA KING GOLD EDITION 100ML", price: 130650, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA PHARAOH RAMESSES 100ML", price: 243750, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA PEACE PARFUM 100ML", price: 140400, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA QUEEN 100ML", price: 117000, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA CHOCOLATE EDP UNISEX 100ML", price: 118950, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA PLACID PARFUM 100ML", price: 138450, category: "unisex" },
+      { brand: "Bharara", name: "BHARARA PEAR EDP FEMENINO 100ML", price: 68250, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA FANTASY EDP 100ML", price: 68250, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA SCARLET EDP 100ML", price: 126750, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA OCEAN EDP 100ML", price: 68250, category: "masculino" },
+      { brand: "Bharara", name: "BHARARA BLOSSOM 100ML", price: 97500, category: "femenino" },
+      { brand: "Bharara", name: "BHARARA ENIMGA EDP 100ML", price: 126750, category: "unisex" },
+      { brand: "Bharara", name: "KIT BHARARA KING EDP 100ML + SET COMPLETO", price: 169650, category: "kit" },
+      { brand: "Bharara", name: "KIT BHARARA THE COLLECTION 7 X 10ML", price: 156000, category: "kit" },
+
+      // --- FRENCH AVENUE ---
+      { brand: "French Avenue", name: "FRENCH AVENUE LIQUID BRUN 100ML", price: 85800, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE COCOA MORADO EDP UNISSEX 100ML", price: 74100, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE AZZURE AOUD EDP MASC 100ML", price: 81900, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE VENUS DE MILO EDP FEM 100ML", price: 97500, category: "femenino" },
+      { brand: "French Avenue", name: "MYTHICAL GRYPHON EDP MASC 100ML", price: 85800, category: "masculino" },
+      { brand: "French Avenue", name: "COCONUT LECHE EDP FEM 100ML", price: 89700, category: "femenino" },
+      { brand: "French Avenue", name: "PINNACE NOIR EDP UNISSEX 100ML", price: 89700, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE RIPPLE 100ML", price: 93600, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE ATLANTIS MASC 100ML", price: 89700, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE NEGRO 100ML", price: 93600, category: "masculino" },
+      { brand: "French Avenue", name: "THUNDER EDP MASCULINO 100ML", price: 95550, category: "masculino" },
+      { brand: "French Avenue", name: "FIRESTORM EDP UNISSEX 100ML", price: 93600, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE MIRAJ EXCLUSIF EDP FEM 100ML", price: 107250, category: "femenino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE SWEET PARADISE EDP FEM 100ML", price: 74100, category: "femenino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE MERINGE EDP FEMENINO 100ML", price: 74100, category: "femenino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE DIWANI BEIRUT EDP UNISSEX 100ML", price: 99450, category: "unisex" },
+      { brand: "French Avenue", name: "AN EQUESTRIAN SERIES PIERCE EDP MASC 100ML", price: 78000, category: "masculino" },
+      { brand: "French Avenue", name: "AN EQUESTRIAN SERIES HAYDAN EDP MASC 100ML", price: 78000, category: "masculino" },
+      { brand: "French Avenue", name: "GRECIA ROSA EXTRAIT DE PARFUM UNISSEX 100ML", price: 97500, category: "unisex" },
+      { brand: "French Avenue", name: "VULCAN BLACK FRIDAY EDP MASC 100ML", price: 79950, category: "masculino" },
+      { brand: "French Avenue", name: "SH MALLOW FLUFF EDP FEM 100ML", price: 87750, category: "femenino" },
+      { brand: "French Avenue", name: "ECLAIR AFFAIR EDP UNISSEX 100ML", price: 76050, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE DIWANI CAIRO EDP UNISSEX 100ML", price: 99450, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE DIWANI RABAT EDP FEM 100ML", price: 99450, category: "femenino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE VULCAN FEU 100ML", price: 87750, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE SPECTRE GHOST 80ML", price: 81900, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENEU VULCAN SABLE EDP UNISSEX 100ML", price: 93600, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE SPECTRE WRAITH EDP MASC 80ML", price: 83850, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE AETHER EXTRAIT MASC 100ML", price: 91650, category: "masculino" },
+      { brand: "French Avenue", name: "FRENCH AVENUE CHAOS EXTRAIT UNISSEX 100ML", price: 83850, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE VENENO BLANCO EDP UNISSEX 100ML", price: 81900, category: "unisex" },
+      { brand: "French Avenue", name: "FRENCH AVENUE VENENO SCARLET 100ML", price: 91650, category: "femenino" },
+
+      // --- RASASI ---
+      { brand: "Rasasi", name: "HAWAS GOLD BY RASASI EDP 100ML", price: 68250, category: "masculino" },
+      { brand: "Rasasi", name: "HAWAS BY RASASI EDP 100ML", price: 60450, category: "masculino" },
+      { brand: "Rasasi", name: "HAWAS ELIXIR BY RASASI EDP 100ML", price: 72150, category: "masculino" },
+      { brand: "Rasasi", name: "HAWAS FIRE BY RASASI EDP 100ML", price: 74100, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS ICE EDP 100ML", price: 79950, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI SHUHRAH EDP 90ML", price: 107250, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS BLACK EDP 100ML", price: 81900, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS VERDE 100ML", price: 93600, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS KOBRA 100ML", price: 74100, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS MALIBU 100ML", price: 78000, category: "masculino" },
+      { brand: "Rasasi", name: "RASASI HAWAS TROPICAL 100ML", price: 74100, category: "masculino" },
+
+      // --- RAYHAAN ---
+      { brand: "Rayhaan", name: "RAYHAAN ELIXIR EDP MASC 100ML", price: 78000, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN ITALIA 100ML", price: 107250, category: "unisex" },
+      { brand: "Rayhaan", name: "RAYHAAN TIGER CAL COLOGNE EXTRAIT UNISSEX 100ML", price: 64350, category: "unisex" },
+      { brand: "Rayhaan", name: "RAYHAAN JUNGLE VIBE EDP 100ML", price: 68250, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN TERRA EDP 100ML", price: 74100, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN TROPICAL VIBE EDP MASC 100ML", price: 83850, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN DAHLIYA EDP FEM 100ML", price: 64350, category: "femenino" },
+      { brand: "Rayhaan", name: "RAYHAAN NOCTURNO POUR HOMME EDP MASC 100ML", price: 66300, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN OCEAN RUSH EDP MASC 100ML", price: 64350, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN IMPERIA EDP MASC 100ML", price: 60450, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN FLORIANA EDP FEM 100ML", price: 64350, category: "femenino" },
+      { brand: "Rayhaan", name: "RAYHAAN AYKA EDP FEM 100ML", price: 64350, category: "femenino" },
+      { brand: "Rayhaan", name: "RAYHAAN LION EDP MASC 100ML", price: 64350, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN PACIFIC AURA EDP MASC 100ML", price: 72150, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN PHARAOH EDP UNISSEX 100ML", price: 72150, category: "unisex" },
+      { brand: "Rayhaan", name: "RAYHAAN AQUATICA EDP MASC 100ML", price: 70200, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN NOCTURNO ELIXIR EDP MASC 100ML", price: 70200, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN TONQUN GIZA EDP UNISSEX 100ML", price: 60450, category: "unisex" },
+      { brand: "Rayhaan", name: "RAYHAAN OBSIDIAN EDP MASC 100ML", price: 79950, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN CRIMSOM EDP MASC 100ML", price: 93600, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN PRETTY IN PINK EDP FEM 100ML", price: 60450, category: "femenino" },
+      { brand: "Rayhaan", name: "RAYHAAN ADONIS ICARUS EDP MASC 100ML", price: 68250, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN VALHALLA EDP UNISSEX 100ML", price: 78000, category: "unisex" },
+      { brand: "Rayhaan", name: "RAYHAAN CORIUM EDP MASC 100ML", price: 78000, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN ELLWOOD EDP MASC 100ML", price: 60450, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN DARK LEATHER EDP MASC 100ML", price: 56550, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN CORDOVA EDP MASC 100ML", price: 60450, category: "masculino" },
+      { brand: "Rayhaan", name: "RAYHAAN FRESH WAVE EDP MASC 100ML", price: 64350, category: "masculino" },
+
+      // --- ORIENTICA ---
+      { brand: "Orientica", name: "ORIENTICA EXCLUSIVE DANIA EXTRAIT FEM 80ML", price: 159900, category: "femenino" },
+      { brand: "Orientica", name: "ORIENTICA LUXU AZURE FANT EDP 80ML", price: 159900, category: "unisex" },
+      { brand: "Orientica", name: "ORIENTICA XO XCLUSIF OUD SPORT EXTRAIT 60ML", price: 142350, category: "masculino" },
+      { brand: "Orientica", name: "ORIENTICA DESERT DUSK EDP FEM 80ML", price: 148200, category: "femenino" },
+      { brand: "Orientica", name: "ORIENTICA ROSE ÉCLAT EDP FEM 80ML", price: 148200, category: "femenino" },
+      { brand: "Orientica", name: "ORIENTICA VELVET GOLD EDP UNISSEX 80ML", price: 138450, category: "unisex" },
+      { brand: "Orientica", name: "ORIENTICA EXCLUSIVE NARDO OUD EXTRAIT 80ML", price: 187200, category: "unisex" },
+      { brand: "Orientica", name: "ORIENTICA VICTORY EXTRAIT DE PARFUM MASC 80ML", price: 144300, category: "masculino" },
+      { brand: "Orientica", name: "ORIENTICA DYSNASTY EDP UNISSEX 80ML", price: 159900, category: "unisex" },
+
+      // --- KITS / OTROS ---
+      { brand: "Kits / Especiales", name: "KIT HAYATI NEGRO EDP 100ML + SPRAY + HAIR 50ML", price: 78000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT NECESSER ROYAL AMBER + ATOMIZADOR + MINI", price: 159900, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT NECESSER OUD SAFFRON + ATOMIZADOR + MINI", price: 136500, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT NECESSER AMBER ROUGE + ATOMIZADOR + MINI", price: 152100, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT NECESSER ROYAL BLEU + ATOMIZADOR + MINI", price: 152100, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT NECESSER VELVET GOLD + ATOMIZADOR + MINI", price: 152100, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT LUXURY COLLECTION 5 MINIATURAS X 7.5ML", price: 117000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT LUXURY COLLECTION AMBER ROUGE 30ML + 7.5ML", price: 113100, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT VINTAGE RADIO (100ML, MINI 20ML, SPRAY)", price: 117000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT LUXURY COLLECTION ROYAL AMBER 30ML + 7.5ML", price: 136500, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT EXPLORE AMBER OUD SERIES EDP (6 X 10ML)", price: 117000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT EXPLORE L'AVENTURE SERIES EDP (7 X 10ML)", price: 117000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT EXPLORE MUSK SERIES EDP (9 X 10ML)", price: 117000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT AMBER OUD BLEU EDITION 75ML + 30ML + SPRAY", price: 195000, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT AMBER OUD GOLD EXTREME 75ML + 30ML", price: 195006, category: "kit" },
+      { brand: "Kits / Especiales", name: "KIT AMBER OUD GOLD EDITION 75ML + 30ML + SPRAY", price: 195000, category: "kit" }
+    ];
+
+    // Assign IDs
+    catalogData.forEach((item, index) => item.id = index + 1);
+
+    // STATE MANAGEMENT
+    let selectedBrand = "all";
+    let cart = []; // Array of { product, qty }
+    let currentMargin = 30; // Default 30% profit markup
+
+    // FORMATTERS
+    const formatCurrency = (val) => {
+      return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        maximumFractionDigits: 0
+      }).format(val).replace('ARS', '$');
+    };
+
+    // DOM ELEMENTS
+    const grid = document.getElementById('product-grid');
+    const emptyState = document.getElementById('empty-state');
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    const categoryFilter = document.getElementById('category-filter');
+    const sortSelect = document.getElementById('sort-select');
+    const priceRange = document.getElementById('price-range');
+    const priceRangeVal = document.getElementById('price-range-val');
+    const brandPillsContainer = document.getElementById('brand-pills-container');
+    const resultsCount = document.getElementById('results-count');
+    const activeBrandLabel = document.getElementById('active-brand-label');
+    const resetFiltersBtn = document.getElementById('reset-filters-btn');
+    const emptyResetBtn = document.getElementById('empty-reset-btn');
+
+    // STATS DOM
+    const statsPanel = document.getElementById('stats-panel');
+    const toggleStatsBtn = document.getElementById('toggle-stats-btn');
+    const statAvgPrice = document.getElementById('stat-avg-price');
+    const statMinPrice = document.getElementById('stat-min-price');
+
+    // CART DRAWER DOM
+    const cartToggleBtn = document.getElementById('cart-toggle-btn');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+    const cartBadge = document.getElementById('cart-badge');
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const marginInput = document.getElementById('margin-input');
+    const marginValDisplay = document.getElementById('margin-val-display');
+    const cartCostTotal = document.getElementById('cart-cost-total');
+    const cartProfitTotal = document.getElementById('cart-profit-total');
+    const cartSaleTotal = document.getElementById('cart-sale-total');
+    const clearCartBtn = document.getElementById('clear-cart-btn');
+    const exportWhatsappBtn = document.getElementById('export-whatsapp-btn');
+
+    // INIT BRANDS FILTER PILLS
+    function initBrandPills() {
+      const brandsMap = {};
+      catalogData.forEach(p => {
+        brandsMap[p.brand] = (brandsMap[p.brand] || 0) + 1;
+      });
+
+      const brands = Object.keys(brandsMap).sort();
+      
+      let html = `
+        <button data-brand="all" class="brand-pill px-3 py-1.5 rounded-full text-xs font-medium border transition ${selectedBrand === 'all' ? 'bg-amber-500 text-zinc-950 border-amber-400 font-semibold' : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700'}">
+          Todas (${catalogData.length})
+        </button>
+      `;
+
+      brands.forEach(b => {
+        const count = brandsMap[b];
+        const isActive = selectedBrand === b;
+        html += `
+          <button data-brand="${b}" class="brand-pill px-3 py-1.5 rounded-full text-xs font-medium border transition ${isActive ? 'bg-amber-500 text-zinc-950 border-amber-400 font-semibold' : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700'}">
+            ${b} <span class="opacity-60 text-[10px]">(${count})</span>
+          </button>
+        `;
+      });
+
+      brandPillsContainer.innerHTML = html;
+
+      // Add click listeners
+      document.querySelectorAll('.brand-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedBrand = btn.getAttribute('data-brand');
+          activeBrandLabel.innerHTML = `Casa: <span class="text-amber-400 font-medium">${selectedBrand === 'all' ? 'Todas' : selectedBrand}</span>`;
+          initBrandPills();
+          renderProducts();
+        });
+      });
+    }
+
+    // CALCULATE GLOBAL STATS
+    function updateStats() {
+      const total = catalogData.length;
+      const sum = catalogData.reduce((acc, curr) => acc + curr.price, 0);
+      const avg = sum / total;
+      const min = Math.min(...catalogData.map(p => p.price));
+
+      statAvgPrice.textContent = formatCurrency(avg);
+      statMinPrice.textContent = formatCurrency(min);
+    }
+
+    // FILTER & SORT LOGIC
+    function getFilteredProducts() {
+      const query = searchInput.value.toLowerCase().trim();
+      const cat = categoryFilter.value;
+      const maxP = parseFloat(priceRange.value);
+      const sort = sortSelect.value;
+
+      let list = catalogData.filter(p => {
+        // Brand filter
+        if (selectedBrand !== 'all' && p.brand !== selectedBrand) return false;
+
+        // Category filter
+        if (cat !== 'all' && p.category !== cat) return false;
+
+        // Price filter
+        if (p.price > maxP) return false;
+
+        // Search query
+        if (query) {
+          const nameMatch = p.name.toLowerCase().includes(query);
+          const brandMatch = p.brand.toLowerCase().includes(query);
+          return nameMatch || brandMatch;
+        }
+
+        return true;
+      });
+
+      // Sorting
+      if (sort === 'price-asc') {
+        list.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price-desc') {
+        list.sort((a, b) => b.price - a.price);
+      } else if (sort === 'name-asc') {
+        list.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sort === 'name-desc') {
+        list.sort((a, b) => b.name.localeCompare(a.name));
+      }
+
+      return list;
+    }
+
+    // RENDER PRODUCTS GRID
+    function renderProducts() {
+      const items = getFilteredProducts();
+      resultsCount.textContent = items.length;
+
+      if (items.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+
+      grid.innerHTML = items.map(p => {
+        const inCart = cart.find(c => c.product.id === p.id);
+        const qty = inCart ? inCart.qty : 0;
+
+        // Category Badge Style
+        let catBadge = '';
+        if (p.category === 'masculino') catBadge = '<span class="bg-blue-950/80 text-blue-400 border border-blue-800/60 px-2 py-0.5 rounded text-[10px] font-semibold">Hombre</span>';
+        else if (p.category === 'femenino') catBadge = '<span class="bg-pink-950/80 text-pink-400 border border-pink-800/60 px-2 py-0.5 rounded text-[10px] font-semibold">Mujer</span>';
+        else if (p.category === 'unisex') catBadge = '<span class="bg-purple-950/80 text-purple-300 border border-purple-800/60 px-2 py-0.5 rounded text-[10px] font-semibold">Unisex</span>';
+        else if (p.category === 'kit') catBadge = '<span class="bg-amber-950/80 text-amber-300 border border-amber-800/60 px-2 py-0.5 rounded text-[10px] font-semibold">Set / Kit</span>';
+
+        return `
+          <div class="bg-zinc-900/90 border border-zinc-800/90 hover:border-amber-500/50 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 group">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[11px] font-bold text-amber-500 uppercase tracking-wider">${p.brand}</span>
+                ${catBadge}
+              </div>
+
+              <h3 class="font-bold text-sm text-zinc-100 group-hover:text-amber-300 transition-colors line-clamp-2 min-h-[2.5rem]">
+                ${p.name}
+              </h3>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-zinc-500 block uppercase font-medium">Precio Final</span>
+                <span class="text-base font-extrabold text-amber-400 font-mono">${formatCurrency(p.price)}</span>
+              </div>
+
+              <button onclick="addToCart(${p.id})" class="px-3 py-1.5 rounded-xl ${qty > 0 ? 'bg-amber-500 text-zinc-950 font-bold' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'} text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="${qty > 0 ? 'check' : 'plus'}" class="w-3.5 h-3.5"></i>
+                <span>${qty > 0 ? `En Pedido (${qty})` : 'Agregar'}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // CART & COTIZADOR LOGIC
+    window.addToCart = function(id) {
+      const product = catalogData.find(p => p.id === id);
+      if (!product) return;
+
+      const existing = cart.find(c => c.product.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ product, qty: 1 });
+      }
+
+      updateCart();
+      renderProducts();
+    };
+
+    function updateCartQty(id, delta) {
+      const item = cart.find(c => c.product.id === id);
+      if (!item) return;
+
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(c => c.product.id !== id);
+      }
+
+      updateCart();
+      renderProducts();
+    }
+
+    function updateCart() {
+      // Badge count
+      const totalQty = cart.reduce((acc, c) => acc + c.qty, 0);
+      cartBadge.textContent = totalQty;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+          <div class="py-12 text-center text-zinc-500 flex flex-col items-center">
+            <i data-lucide="shopping-cart" class="w-10 h-10 text-zinc-700 mb-2"></i>
+            <p class="text-xs font-medium">Tu pedido de cotización está vacío</p>
+            <p class="text-[11px] text-zinc-600 mt-1">Navega por el catálogo y agrega fragancias para calcular precios y ganancias.</p>
+          </div>
+        `;
+      } else {
+        cartItemsContainer.innerHTML = cart.map(item => {
+          const costUnitPrice = item.product.price;
+          const saleUnitPrice = costUnitPrice * (1 + currentMargin / 100);
+          const itemSaleTotal = saleUnitPrice * item.qty;
+
+          return `
+            <div class="pt-3 first:pt-0 flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <span class="text-[10px] font-bold text-amber-500 uppercase">${item.product.brand}</span>
+                <h4 class="text-xs font-semibold text-zinc-200 leading-tight">${item.product.name}</h4>
+                
+                <div class="mt-1 flex items-center gap-3 text-[11px] font-mono">
+                  <span class="text-zinc-400">Costo: ${formatCurrency(costUnitPrice)}</span>
+                  <span class="text-emerald-400 font-bold">Venta: ${formatCurrency(saleUnitPrice)}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col items-end gap-1.5">
+                <div class="flex items-center gap-1.5 bg-zinc-950 border border-zinc-800 rounded-lg p-0.5">
+                  <button onclick="updateCartQty(${item.product.id}, -1)" class="w-6 h-6 rounded flex items-center justify-center hover:bg-zinc-800 text-zinc-300 text-xs">-</button>
+                  <span class="w-5 text-center text-xs font-bold font-mono text-amber-400">${item.qty}</span>
+                  <button onclick="updateCartQty(${item.product.id}, 1)" class="w-6 h-6 rounded flex items-center justify-center hover:bg-zinc-800 text-zinc-300 text-xs">+</button>
+                </div>
+                <span class="text-xs font-bold text-zinc-200 font-mono">${formatCurrency(itemSaleTotal)}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Calculate totals
+      const subtotalCost = cart.reduce((acc, c) => acc + (c.product.price * c.qty), 0);
+      const totalSale = subtotalCost * (1 + currentMargin / 100);
+      const totalProfit = totalSale - subtotalCost;
+
+      cartCostTotal.textContent = formatCurrency(subtotalCost);
+      cartProfitTotal.textContent = `+${formatCurrency(totalProfit)}`;
+      cartSaleTotal.textContent = formatCurrency(totalSale);
+
+      lucide.createIcons();
+    }
+
+    // EVENT LISTENERS
+    searchInput.addEventListener('input', (e) => {
+      if (e.target.value.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      renderProducts();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      renderProducts();
+    });
+
+    categoryFilter.addEventListener('change', renderProducts);
+    sortSelect.addEventListener('change', renderProducts);
+
+    priceRange.addEventListener('input', (e) => {
+      priceRangeVal.textContent = formatCurrency(e.target.value);
+      renderProducts();
+    });
+
+    function resetFilters() {
+      selectedBrand = 'all';
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      categoryFilter.value = 'all';
+      sortSelect.value = 'default';
+      priceRange.value = 250000;
+      priceRangeVal.textContent = '$250.000';
+      activeBrandLabel.innerHTML = 'Casa: <span class="text-zinc-200">Todas</span>';
+      initBrandPills();
+      renderProducts();
+    }
+
+    resetFiltersBtn.addEventListener('click', resetFilters);
+    emptyResetBtn.addEventListener('click', resetFilters);
+
+    toggleStatsBtn.addEventListener('click', () => {
+      statsPanel.classList.toggle('hidden');
+      statsPanel.classList.toggle('grid');
+    });
+
+    // CART DRAWER TOGGLES
+    function openCart() {
+      cartDrawerOverlay.classList.remove('hidden');
+      setTimeout(() => {
+        cartDrawerOverlay.classList.remove('opacity-0');
+        cartDrawer.classList.remove('translate-x-full');
+      }, 10);
+    }
+
+    function closeCart() {
+      cartDrawer.classList.add('translate-x-full');
+      cartDrawerOverlay.classList.add('opacity-0');
+      setTimeout(() => {
+        cartDrawerOverlay.classList.add('hidden');
+      }, 300);
+    }
+
+    cartToggleBtn.addEventListener('click', openCart);
+    closeCartBtn.addEventListener('click', closeCart);
+    cartDrawerOverlay.addEventListener('click', closeCart);
+
+    // MARGIN SLIDER
+    marginInput.addEventListener('input', (e) => {
+      currentMargin = parseInt(e.target.value, 10);
+      marginValDisplay.textContent = `+${currentMargin}%`;
+      updateCart();
+    });
+
+    clearCartBtn.addEventListener('click', () => {
+      if (cart.length === 0) return;
+      if (confirm('¿Vaciar la lista del cotizador?')) {
+        cart = [];
+        updateCart();
+        renderProducts();
+      }
+    });
+
+    // WHATSAPP EXPORT
+    exportWhatsappBtn.addEventListener('click', () => {
+      if (cart.length === 0) {
+        alert('Agrega al menos una fragancia para exportar el pedido.');
+        return;
+      }
+
+      const subtotalCost = cart.reduce((acc, c) => acc + (c.product.price * c.qty), 0);
+      const totalSale = subtotalCost * (1 + currentMargin / 100);
+
+      let text = `*SOLICITUD DE PEDIDO / COTIZACIÓN - CATÁLOGO ESENCIA*\n\n`;
+      cart.forEach((item, idx) => {
+        const salePrice = item.product.price * (1 + currentMargin / 100);
+        text += `${idx + 1}. *${item.product.brand}* - ${item.product.name}\n`;
+        text += `   Cantidad: ${item.qty} u. | Precio u.: ${formatCurrency(salePrice)}\n`;
+      });
+
+      text += `\n--------------------------------\n`;
+      text += `*TOTAL ESTIMADO:* ${formatCurrency(totalSale)}\n`;
+      text += `_Margen aplicado: +${currentMargin}%_\n\n`;
+      text += `¡Hola! Me gustaría consultar stock y confirmar este pedido.`;
+
+      const encoded = encodeURIComponent(text);
+      window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    });
+
+    // INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStats();
+      initBrandPills();
+      renderProducts();
+      updateCart();
+    });
+  </script>
+</body>
+</html>
